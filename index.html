@@ -2,34 +2,24 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>شجرة آل عگله - التفاعلية</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.1, maximum-scale=4.0, user-scalable=yes">
+    <title>شجرة آل عگله - النسخة الحرة</title>
     <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* إعدادات الصفحة */
+        /* إعدادات الصفحة لتصبح لوحة كبيرة */
         body { 
             font-family: 'Amiri', serif; 
             background-color: #fdf5e6; 
-            margin: 0; padding: 0; 
-            overflow: hidden; /* منع التمرير التقليدي */
-            height: 100vh; width: 100vw;
-            touch-action: none; /* تفعيل اللمس المخصص */
-        }
-
-        /* حاوية الشجرة القابلة للتحريك */
-        #viewport {
-            width: 100%; height: 100%;
-            display: flex; justify-content: center; align-items: center;
-            cursor: grab;
-        }
-        
-        .tree-container {
-            transform-origin: center top;
-            transition: transform 0.1s ease-out;
+            margin: 0; padding: 50px; 
+            /* نسمح للصفحة بأن تأخذ حجم الشجرة مهما كبرت */
+            width: max-content; 
+            min-width: 100vw;
+            height: max-content;
+            overflow: auto; /* تفعيل السحب الطبيعي */
         }
 
         /* تصميم الشجرة */
-        .tree { display: flex; justify-content: center; }
+        .tree { display: block; margin: auto; }
         .tree ul {
             padding-top: 20px; position: relative;
             display: flex; justify-content: center;
@@ -62,33 +52,26 @@
             padding: 8px 12px;
             text-decoration: none;
             color: #33691e;
-            font-size: 14px; font-weight: bold;
+            font-size: 16px; font-weight: bold;
             display: inline-block;
             border-radius: 10px;
             box-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-            min-width: 80px;
+            min-width: 90px;
             cursor: pointer;
-            user-select: none;
+            white-space: nowrap; /* منع النص من النزول سطر جديد */
+            position: relative; z-index: 2;
         }
-        .root-node { background: #5d4037 !important; color: #fff !important; font-size: 18px; }
-        .small-text { font-size: 11px; color: #666; display: block; margin-top: 2px; }
+        .root-node { background: #5d4037 !important; color: #fff !important; font-size: 20px; }
+        .small-text { font-size: 12px; color: #666; display: block; margin-top: 2px; }
 
-        /* لوحة التحكم السفلية */
-        #controls {
-            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-            background: rgba(255, 255, 255, 0.9);
-            padding: 10px 20px; border-radius: 30px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            display: flex; gap: 15px; z-index: 1000;
-        }
-        .btn {
-            background: #5d4037; color: white; border: none;
-            width: 40px; height: 40px; border-radius: 50%;
-            font-size: 20px; cursor: pointer;
-        }
-        .btn-save {
-            background: #2e7d32; width: auto; padding: 0 20px;
-            font-size: 14px; font-family: 'Amiri'; border-radius: 20px;
+        /* زر الحفظ العائم */
+        #save-btn {
+            position: fixed; bottom: 20px; right: 20px;
+            background: #2e7d32; color: white; border: none;
+            padding: 15px 25px; border-radius: 50px;
+            font-size: 16px; font-family: 'Amiri';
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            cursor: pointer; z-index: 1000;
         }
 
         /* نافذة التعديل */
@@ -96,69 +79,62 @@
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.5); z-index: 2000;
             justify-content: center; align-items: center;
+            backdrop-filter: blur(2px);
         }
         .modal-content {
-            background: white; padding: 20px; border-radius: 10px; text-align: center; width: 80%;
+            background: white; padding: 25px; border-radius: 15px; text-align: center; width: 85%; max-width: 300px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
         }
         .modal-btn {
-            display: block; width: 100%; padding: 10px; margin: 5px 0;
-            border: none; border-radius: 5px; color: white; cursor: pointer; font-family: 'Amiri';
+            display: block; width: 100%; padding: 12px; margin: 8px 0;
+            border: none; border-radius: 8px; color: white; cursor: pointer; font-family: 'Amiri'; font-size: 16px;
         }
     </style>
 </head>
 <body>
 
-    <div id="viewport">
-        <div class="tree-container" id="treeContainer">
-            <div class="tree" id="familyTree">
+    <div class="tree" id="familyTree">
+        <ul>
+            <li>
+                <div class="node-content root-node" onclick="openMenu(this)">صكر بن عگله</div>
                 <ul>
                     <li>
-                        <div class="node-content root-node" onclick="openMenu(this)">صكر بن عگله</div>
+                        <div class="node-content" onclick="openMenu(this)">چاسب <br><small>1930</small></div>
                         <ul>
-                            <li>
-                                <div class="node-content" onclick="openMenu(this)">چاسب <br><small>1930</small></div>
-                                <ul>
-                                    <li><div class="node-content" onclick="openMenu(this)">حسب 65</div></li>
-                                    <li><div class="node-content" onclick="openMenu(this)">عبد 74</div></li>
-                                    <li><div class="node-content" onclick="openMenu(this)">فاخر 71</div></li>
-                                    <li><div class="node-content" onclick="openMenu(this)">فاضل 73</div></li>
-                                    <li><div class="node-content" onclick="openMenu(this)">نعيم 80</div></li>
-                                </ul>
-                            </li>
-                            
-                             <li>
-                                <div class="node-content" onclick="openMenu(this)">حاتم <br><small>1947</small></div>
-                                <ul>
-                                     <li><div class="node-content" onclick="openMenu(this)">سعد 74</div></li>
-                                     <li><div class="node-content" onclick="openMenu(this)">مهدي 87</div></li>
-                                     <li><div class="node-content" onclick="openMenu(this)">حسين 89</div></li>
-                                </ul>
-                            </li>
-
-                            <li><div class="node-content" onclick="openMenu(this)">هاشم 47</div></li>
-                             <li><div class="node-content" onclick="openMenu(this)">قاسم 51</div></li>
-                             <li><div class="node-content" onclick="openMenu(this)">جاسم 54</div></li>
-                             <li><div class="node-content" onclick="openMenu(this)">كريم 60</div></li>
-                             <li><div class="node-content" onclick="openMenu(this)">حسين 67</div></li>
-                             <li><div class="node-content" onclick="openMenu(this)">باسم 70</div></li>
-                             <li><div class="node-content" onclick="openMenu(this)">فالح 71</div></li>
-
+                            <li><div class="node-content" onclick="openMenu(this)">حسب 65</div></li>
+                            <li><div class="node-content" onclick="openMenu(this)">عبد 74</div></li>
+                            <li><div class="node-content" onclick="openMenu(this)">فاخر 71</div></li>
+                            <li><div class="node-content" onclick="openMenu(this)">فاضل 73</div></li>
+                            <li><div class="node-content" onclick="openMenu(this)">نعيم 80</div></li>
                         </ul>
                     </li>
+                    
+                     <li>
+                        <div class="node-content" onclick="openMenu(this)">حاتم <br><small>1947</small></div>
+                        <ul>
+                             <li><div class="node-content" onclick="openMenu(this)">سعد 74</div></li>
+                             <li><div class="node-content" onclick="openMenu(this)">مهدي 87</div></li>
+                             <li><div class="node-content" onclick="openMenu(this)">حسين 89</div></li>
+                        </ul>
+                    </li>
+
+                     <li><div class="node-content" onclick="openMenu(this)">هاشم 47</div></li>
+                     <li><div class="node-content" onclick="openMenu(this)">قاسم 51</div></li>
+                     <li><div class="node-content" onclick="openMenu(this)">جاسم 54</div></li>
+                     <li><div class="node-content" onclick="openMenu(this)">كريم 60</div></li>
+                     <li><div class="node-content" onclick="openMenu(this)">حسين 67</div></li>
+                     <li><div class="node-content" onclick="openMenu(this)">باسم 70</div></li>
+                     <li><div class="node-content" onclick="openMenu(this)">فالح 71</div></li>
                 </ul>
-            </div>
-        </div>
+            </li>
+        </ul>
     </div>
 
-    <div id="controls">
-        <button class="btn" onclick="zoom(0.1)">+</button>
-        <button class="btn" onclick="zoom(-0.1)">-</button>
-        <button class="btn btn-save" onclick="exportHTML()">💾 نسخ الكود الجديد</button>
-    </div>
+    <button id="save-btn" onclick="exportHTML()">💾 نسخ الكود</button>
 
     <div id="modal">
         <div class="modal-content">
-            <h3>تعديل: <span id="selectedName"></span></h3>
+            <h3 style="margin-top:0">تعديل: <span id="selectedName" style="color:#2e7d32"></span></h3>
             <button class="modal-btn" style="background:#1976d2" onclick="editName()">✏️ تعديل الاسم</button>
             <button class="modal-btn" style="background:#388e3c" onclick="addChild()">➕ إضافة ابن</button>
             <button class="modal-btn" style="background:#d32f2f" onclick="deleteNode()">🗑️ حذف</button>
@@ -167,79 +143,43 @@
     </div>
 
     <script>
-        // متغيرات التحكم في الحركة
-        let scale = 1;
-        let pannedX = 0;
-        let pannedY = 0;
-        const container = document.getElementById('treeContainer');
-        const viewport = document.getElementById('viewport');
-        
-        // منطق الحركة (Pan & Zoom)
-        let isDragging = false;
-        let startX, startY;
-
-        viewport.addEventListener('mousedown', startDrag);
-        viewport.addEventListener('touchstart', startDrag);
-
-        document.addEventListener('mousemove', drag);
-        document.addEventListener('touchmove', drag);
-
-        document.addEventListener('mouseup', endDrag);
-        document.addEventListener('touchend', endDrag);
-
-        function startDrag(e) {
-            if(e.target.closest('.node-content')) return; // عدم السحب عند الضغط على اسم
-            isDragging = true;
-            const point = e.touches ? e.touches[0] : e;
-            startX = point.clientX - pannedX;
-            startY = point.clientY - pannedY;
-        }
-
-        function drag(e) {
-            if (!isDragging) return;
-            e.preventDefault();
-            const point = e.touches ? e.touches[0] : e;
-            pannedX = point.clientX - startX;
-            pannedY = point.clientY - startY;
-            updateTransform();
-        }
-
-        function endDrag() { isDragging = false; }
-
-        function zoom(delta) {
-            scale += delta;
-            if (scale < 0.2) scale = 0.2;
-            updateTransform();
-        }
-
-        function updateTransform() {
-            container.style.transform = `translate(${pannedX}px, ${pannedY}px) scale(${scale})`;
-        }
-
-        // منطق التعديل والإضافة
         let currentElement = null;
         const modal = document.getElementById('modal');
 
+        // فتح القائمة
         function openMenu(element) {
             currentElement = element;
-            document.getElementById('selectedName').innerText = element.innerText;
+            // عرض الاسم بدون الأكواد HTML
+            let cleanName = element.innerHTML.replace(/<br>/g, " ").replace(/<small>.*?<\/small>/g, "").replace(/<span.*?<\/span>/g, "");
+            document.getElementById('selectedName').innerText = cleanName;
             modal.style.display = 'flex';
         }
 
+        // إغلاق القائمة
         function closeModal() { modal.style.display = 'none'; }
 
+        // تعديل الاسم
         function editName() {
-            let newName = prompt("أدخل الاسم الجديد:", currentElement.innerHTML.replace(/<br>/g, " ").replace(/<small>.*?<\/small>/g, ""));
-            if (newName) currentElement.innerHTML = newName;
+            // تنظيف الاسم الحالي لعرضه في مربع النص
+            let oldHTML = currentElement.innerHTML;
+            let cleanText = currentElement.innerText.replace(/\n/g, " ");
+            
+            let newName = prompt("أدخل الاسم الجديد (يمكنك استخدام <br> للنزول سطر):", cleanText);
+            if (newName) {
+                // الحفاظ على التصميم الصغير إذا لم يغيره المستخدم بالكامل
+                currentElement.innerHTML = newName;
+            }
             closeModal();
         }
 
+        // إضافة ابن جديد
         function addChild() {
             let childName = prompt("أدخل اسم الابن الجديد:");
             if (childName) {
                 let parentLi = currentElement.parentElement;
                 let ul = parentLi.querySelector('ul');
                 
+                // إذا لم يكن لديه أبناء سابقاً، ننشئ قائمة جديدة
                 if (!ul) {
                     ul = document.createElement('ul');
                     parentLi.appendChild(ul);
@@ -252,11 +192,12 @@
             closeModal();
         }
 
+        // الحذف
         function deleteNode() {
-            if(confirm("هل أنت متأكد من حذف هذا الاسم وكل فروعه؟")) {
+            if(confirm("هل أنت متأكد من حذف هذا الاسم؟")) {
                 let li = currentElement.parentElement;
                 if(li.parentElement.children.length === 1 && li.parentElement.id !== 'familyTree') {
-                    li.parentElement.remove(); // حذف القائمة إذا فرغت
+                    li.parentElement.remove(); // حذف القائمة بالكامل إذا فرغت
                 } else {
                     li.remove();
                 }
@@ -266,22 +207,11 @@
 
         // نسخ الكود للحفظ
         function exportHTML() {
-            alert("سيتم الآن نسخ الكود كاملاً. \n\n1. اذهب إلى GitHub.\n2. امسح الكود القديم.\n3. الصق هذا الكود الجديد.\n4. اضغط Commit.");
-            
-            // تنظيف الصفحة قبل النسخ (إرجاع الحجم للوضع الطبيعي مؤقتاً)
-            let tempScale = scale;
-            let tempX = pannedX; 
-            let tempY = pannedY;
-            
-            // نسخ محتوى الصفحة
             let htmlContent = document.documentElement.outerHTML;
-            
-            // نسخ للحافظة
             navigator.clipboard.writeText(htmlContent).then(() => {
-                alert("تم نسخ الكود! اذهب لـ GitHub الآن.");
+                alert("✅ تم نسخ الكود الجديد!\n\nاذهب الآن إلى GitHub:\n1. امسح الكود القديم\n2. الصق هذا الكود\n3. اضغط Commit");
             }).catch(err => {
-                console.error('فشل النسخ', err);
-                alert("فشل النسخ التلقائي، حاول تحديد النص ونسخه يدوياً.");
+                alert("❌ لم يتم النسخ تلقائياً. يرجى تحديد الكل ونسخه يدوياً.");
             });
         }
     </script>
