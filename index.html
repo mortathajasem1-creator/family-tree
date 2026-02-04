@@ -2,223 +2,288 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>شجرة آل عگله - النسخة الفنية</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>شجرة آل عگله - التفاعلية</title>
     <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* خلفية ورقية قديمة */
+        /* إعدادات الصفحة */
         body { 
             font-family: 'Amiri', serif; 
             background-color: #fdf5e6; 
-            background-image: radial-gradient(#d4c5a9 1px, transparent 1px);
-            background-size: 20px 20px;
-            text-align: center; 
-            padding: 40px 10px;
-            margin: 0;
+            margin: 0; padding: 0; 
+            overflow: hidden; /* منع التمرير التقليدي */
+            height: 100vh; width: 100vw;
+            touch-action: none; /* تفعيل اللمس المخصص */
         }
 
-        h1 { 
-            color: #5d4037; 
-            font-size: 2.5em; 
-            margin-bottom: 50px;
-            text-shadow: 1px 1px 2px #cea978;
+        /* حاوية الشجرة القابلة للتحريك */
+        #viewport {
+            width: 100%; height: 100%;
+            display: flex; justify-content: center; align-items: center;
+            cursor: grab;
         }
         
-        /* هيكلية الشجرة */
-        .tree { display: flex; justify-content: center; overflow-x: auto; padding-bottom: 50px; }
+        .tree-container {
+            transform-origin: center top;
+            transition: transform 0.1s ease-out;
+        }
+
+        /* تصميم الشجرة */
+        .tree { display: flex; justify-content: center; }
         .tree ul {
             padding-top: 20px; position: relative;
-            transition: all 0.5s;
             display: flex; justify-content: center;
         }
         .tree li {
             float: right; text-align: center; list-style-type: none;
             position: relative; padding: 20px 5px 0 5px;
-            transition: all 0.5s;
         }
 
-        /* رسم الأغصان (الخطوط المنحنية) */
+        /* الخطوط والأغصان */
         .tree li::before, .tree li::after {
             content: ''; position: absolute; top: 0; right: 50%;
-            border-top: 3px solid #8d6e63; /* لون الغصن بني */
-            width: 50%; height: 20px;
-            border-radius: 50px 0 0 0; /* انحناء الغصن */
+            border-top: 2px solid #8d6e63; width: 50%; height: 20px;
         }
-        .tree li::after { 
-            right: auto; left: 50%; 
-            border-left: 3px solid #8d6e63;
-            border-radius: 0 50px 0 0; /* انحناء للجهة الأخرى */
-        }
+        .tree li::after { right: auto; left: 50%; border-left: 2px solid #8d6e63; }
         .tree li:only-child::after, .tree li:only-child::before { display: none; }
         .tree li:only-child { padding-top: 0; }
         .tree li:first-child::before, .tree li:last-child::after { border: 0 none; }
-        .tree li:last-child::before { 
-            border-right: 3px solid #8d6e63; 
-            border-radius: 0 15px 0 0; 
-        }
-        .tree li:first-child::after { 
-            border-radius: 15px 0 0 0; 
-        }
+        .tree li:last-child::before { border-right: 2px solid #8d6e63; border-radius: 0 5px 0 0; }
+        .tree li:first-child::after { border-radius: 5px 0 0 0; }
         .tree ul ul::before {
             content: ''; position: absolute; top: 0; right: 50%;
-            border-left: 3px solid #8d6e63; width: 0; height: 20px;
+            border-left: 2px solid #8d6e63; width: 0; height: 20px;
         }
 
-        /* تصميم "الورقة" أو البطاقة */
-        .tree li a {
+        /* البطاقات (الأسماء) */
+        .node-content {
             background: linear-gradient(to bottom, #fff, #f1f8e9);
-            border: 2px solid #558b2f; /* إطار أخضر */
-            padding: 10px 15px;
+            border: 1px solid #558b2f;
+            padding: 8px 12px;
             text-decoration: none;
-            color: #33691e; /* نص أخضر غامق */
-            font-family: 'Amiri', serif; 
-            font-size: 16px; 
-            font-weight: bold;
+            color: #33691e;
+            font-size: 14px; font-weight: bold;
             display: inline-block;
-            border-radius: 15px 0 15px 0; /* شكل ورقة شجر */
-            box-shadow: 3px 3px 5px rgba(0,0,0,0.1);
-            transition: all 0.3s;
-            min-width: 90px;
-            position: relative;
+            border-radius: 10px;
+            box-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            min-width: 80px;
+            cursor: pointer;
+            user-select: none;
+        }
+        .root-node { background: #5d4037 !important; color: #fff !important; font-size: 18px; }
+        .small-text { font-size: 11px; color: #666; display: block; margin-top: 2px; }
+
+        /* لوحة التحكم السفلية */
+        #controls {
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px 20px; border-radius: 30px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            display: flex; gap: 15px; z-index: 1000;
+        }
+        .btn {
+            background: #5d4037; color: white; border: none;
+            width: 40px; height: 40px; border-radius: 50%;
+            font-size: 20px; cursor: pointer;
+        }
+        .btn-save {
+            background: #2e7d32; width: auto; padding: 0 20px;
+            font-size: 14px; font-family: 'Amiri'; border-radius: 20px;
         }
 
-        /* تأثير عند اللمس */
-        .tree li a:hover { 
-            background: #c5e1a5; 
-            transform: scale(1.1); 
-            box-shadow: 0px 0px 10px #8bc34a;
-            z-index: 10;
+        /* نافذة التعديل */
+        #modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); z-index: 2000;
+            justify-content: center; align-items: center;
         }
-        
-        /* الجد الأكبر (الجذع) */
-        .root-node { 
-            background: #5d4037 !important; 
-            color: #fff !important; 
-            border: 3px solid #3e2723 !important;
-            font-size: 22px !important;
-            border-radius: 10px !important;
-            padding: 15px 30px !important;
+        .modal-content {
+            background: white; padding: 20px; border-radius: 10px; text-align: center; width: 80%;
         }
-
-        /* الأحفاد الصغار */
-        .small-text { font-size: 12px; color: #555; display: block; margin-top: 5px; }
-
-        /* أيقونة ورقة صغيرة بجانب الاسم */
-        .tree li a::before {
-            content: '🍃';
-            display: block; font-size: 12px; margin-bottom: 2px;
+        .modal-btn {
+            display: block; width: 100%; padding: 10px; margin: 5px 0;
+            border: none; border-radius: 5px; color: white; cursor: pointer; font-family: 'Amiri';
         }
-        .root-node::before { content: '🌳'; font-size: 20px; }
-
     </style>
 </head>
 <body>
 
-    <h1>🌳 شجرة آل عگله - فرع صكر</h1>
-    
-    <div class="tree">
-        <ul>
-            <li>
-                <a href="#" class="root-node">صكر بن عگله</a>
+    <div id="viewport">
+        <div class="tree-container" id="treeContainer">
+            <div class="tree" id="familyTree">
                 <ul>
-                    <li><a href="#">چاسب <br><small>1930</small></a>
+                    <li>
+                        <div class="node-content root-node" onclick="openMenu(this)">صكر بن عگله</div>
                         <ul>
-                            <li><a href="#">حسب <small>65</small></a>
-                                <ul><li><a href="#">علي 91<span class="small-text">أمير 20</span></a></li><li><a href="#">حسنين 02</a></li></ul>
-                            </li>
-                            <li><a href="#">عبد <small>74</small></a>
-                                <ul><li><a href="#">م.باقر 03</a></li><li><a href="#">م.تقي</a></li><li><a href="#">م.جواد 10</a></li></ul>
-                            </li>
-                            <li><a href="#">فاخر <small>71</small></a>
-                                <ul><li><a href="#">بلال 98</a></li><li><a href="#">منهال 99</a></li></ul>
-                            </li>
-                            <li><a href="#">فاضل <small>73</small></a>
-                                <ul><li><a href="#">أحمد</a></li><li><a href="#">عباس 10</a></li></ul>
-                            </li>
-                            <li><a href="#">نعيم <small>80</small></a>
-                                <ul><li><a href="#">رضوان 12</a></li><li><a href="#">علي 20</a></li></ul>
-                            </li>
-                        </ul>
-                    </li>
-
-                    <li><a href="#">حاتم <br><small>1947</small></a>
-                        <ul>
-                            <li><a href="#">سعد 74</a>
+                            <li>
+                                <div class="node-content" onclick="openMenu(this)">چاسب <br><small>1930</small></div>
                                 <ul>
-                                    <li><a href="#">صادق 92<span class="small-text">علي, حاتم</span></a></li>
-                                    <li><a href="#">صالح 93<span class="small-text">حسين, كاظم</span></a></li>
+                                    <li><div class="node-content" onclick="openMenu(this)">حسب 65</div></li>
+                                    <li><div class="node-content" onclick="openMenu(this)">عبد 74</div></li>
+                                    <li><div class="node-content" onclick="openMenu(this)">فاخر 71</div></li>
+                                    <li><div class="node-content" onclick="openMenu(this)">فاضل 73</div></li>
+                                    <li><div class="node-content" onclick="openMenu(this)">نعيم 80</div></li>
                                 </ul>
                             </li>
-                            <li><a href="#">مهدي 87</a><ul><li><a href="#">عباس 12</a></li></ul></li>
-                            <li><a href="#">حسين 89</a><ul><li><a href="#">إبراهيم 09</a></li><li><a href="#">علي 14</a></li></ul></li>
-                        </ul>
-                    </li>
-
-                    <li><a href="#">هاشم <br><small>1947</small></a>
-                        <ul>
-                            <li><a href="#">حميد 73</a><ul><li><a href="#">علي 02</a></li><li><a href="#">حسين 04</a></li></ul></li>
-                            <li><a href="#">حمود 77</a><ul><li><a href="#">يوسف 18</a></li><li><a href="#">مصطفى 24</a></li></ul></li>
-                            <li><a href="#">محمد 78</a><ul><li><a href="#">حسن 16</a></li></ul></li>
-                            <li><a href="#">علي 82</a><ul><li><a href="#">محمد 11</a></li></ul></li>
-                            <li><a href="#">باقر 90</a><ul><li><a href="#">أحمد 12</a></li></ul></li>
-                            <li><a href="#">صادق 92</a><ul><li><a href="#">سيف 19</a></li></ul></li>
-                        </ul>
-                    </li>
-
-                    <li><a href="#">قاسم <br><small>1951</small></a>
-                        <ul>
-                            <li><a href="#">ناصر 76</a>
-                                <ul><li><a href="#">حسين</a></li><li><a href="#">عباس</a></li><li><a href="#">علي</a></li></ul>
+                            
+                             <li>
+                                <div class="node-content" onclick="openMenu(this)">حاتم <br><small>1947</small></div>
+                                <ul>
+                                     <li><div class="node-content" onclick="openMenu(this)">سعد 74</div></li>
+                                     <li><div class="node-content" onclick="openMenu(this)">مهدي 87</div></li>
+                                     <li><div class="node-content" onclick="openMenu(this)">حسين 89</div></li>
+                                </ul>
                             </li>
-                            <li><a href="#">حيدر 80</a></li>
+
+                            <li><div class="node-content" onclick="openMenu(this)">هاشم 47</div></li>
+                             <li><div class="node-content" onclick="openMenu(this)">قاسم 51</div></li>
+                             <li><div class="node-content" onclick="openMenu(this)">جاسم 54</div></li>
+                             <li><div class="node-content" onclick="openMenu(this)">كريم 60</div></li>
+                             <li><div class="node-content" onclick="openMenu(this)">حسين 67</div></li>
+                             <li><div class="node-content" onclick="openMenu(this)">باسم 70</div></li>
+                             <li><div class="node-content" onclick="openMenu(this)">فالح 71</div></li>
+
                         </ul>
                     </li>
-
-                    <li><a href="#">جاسم <br><small>1954</small></a>
-                        <ul>
-                            <li><a href="#">أحمد 83</a>
-                                <ul><li><a href="#">علي 01<span class="small-text">مصطفى 23</span></a></li><li><a href="#">يونس 08</a></li></ul>
-                            </li>
-                            <li><a href="#">عباس 86</a><ul><li><a href="#">فاضل 13</a></li></ul></li>
-                            <li><a href="#">مرتضى 88</a></li>
-                        </ul>
-                    </li>
-
-                    <li><a href="#">كريم <br><small>1960</small></a>
-                        <ul>
-                            <li><a href="#">عمار 83</a><ul><li><a href="#">مؤمل 06</a></li><li><a href="#">محمد 07</a></li></ul></li>
-                            <li><a href="#">علي 89</a><ul><li><a href="#">حسين 21</a></li></ul></li>
-                            <li><a href="#">حيدر 93</a></li>
-                        </ul>
-                    </li>
-
-                    <li><a href="#">حسين <br><small>1967</small></a>
-                        <ul>
-                            <li><a href="#">مالك 82</a><ul><li><a href="#">يوسف 04</a></li></ul></li>
-                            <li><a href="#">علاء 85</a><ul><li><a href="#">أبو الحسن</a></li></ul></li>
-                            <li><a href="#">محمد 93</a><ul><li><a href="#">آدم 24</a></li></ul></li>
-                        </ul>
-                    </li>
-
-                    <li><a href="#">باسم <br><small>1970</small></a>
-                        <ul>
-                            <li><a href="#">حسن 92</a><ul><li><a href="#">علي 11</a></li></ul></li>
-                            <li><a href="#">محمد 97</a><ul><li><a href="#">علي 20</a></li></ul></li>
-                        </ul>
-                    </li>
-
-                    <li><a href="#">فالح <br><small>1971</small></a>
-                        <ul>
-                            <li><a href="#">أحمد 93</a><ul><li><a href="#">علي 12</a></li></ul></li>
-                            <li><a href="#">علي 97</a></li>
-                            <li><a href="#">منتظر 00</a></li>
-                            <li><a href="#">م.تقي 04</a></li>
-                        </ul>
-                    </li>
-
                 </ul>
-            </li>
-        </ul>
+            </div>
+        </div>
     </div>
+
+    <div id="controls">
+        <button class="btn" onclick="zoom(0.1)">+</button>
+        <button class="btn" onclick="zoom(-0.1)">-</button>
+        <button class="btn btn-save" onclick="exportHTML()">💾 نسخ الكود الجديد</button>
+    </div>
+
+    <div id="modal">
+        <div class="modal-content">
+            <h3>تعديل: <span id="selectedName"></span></h3>
+            <button class="modal-btn" style="background:#1976d2" onclick="editName()">✏️ تعديل الاسم</button>
+            <button class="modal-btn" style="background:#388e3c" onclick="addChild()">➕ إضافة ابن</button>
+            <button class="modal-btn" style="background:#d32f2f" onclick="deleteNode()">🗑️ حذف</button>
+            <button class="modal-btn" style="background:#757575" onclick="closeModal()">إلغاء</button>
+        </div>
+    </div>
+
+    <script>
+        // متغيرات التحكم في الحركة
+        let scale = 1;
+        let pannedX = 0;
+        let pannedY = 0;
+        const container = document.getElementById('treeContainer');
+        const viewport = document.getElementById('viewport');
+        
+        // منطق الحركة (Pan & Zoom)
+        let isDragging = false;
+        let startX, startY;
+
+        viewport.addEventListener('mousedown', startDrag);
+        viewport.addEventListener('touchstart', startDrag);
+
+        document.addEventListener('mousemove', drag);
+        document.addEventListener('touchmove', drag);
+
+        document.addEventListener('mouseup', endDrag);
+        document.addEventListener('touchend', endDrag);
+
+        function startDrag(e) {
+            if(e.target.closest('.node-content')) return; // عدم السحب عند الضغط على اسم
+            isDragging = true;
+            const point = e.touches ? e.touches[0] : e;
+            startX = point.clientX - pannedX;
+            startY = point.clientY - pannedY;
+        }
+
+        function drag(e) {
+            if (!isDragging) return;
+            e.preventDefault();
+            const point = e.touches ? e.touches[0] : e;
+            pannedX = point.clientX - startX;
+            pannedY = point.clientY - startY;
+            updateTransform();
+        }
+
+        function endDrag() { isDragging = false; }
+
+        function zoom(delta) {
+            scale += delta;
+            if (scale < 0.2) scale = 0.2;
+            updateTransform();
+        }
+
+        function updateTransform() {
+            container.style.transform = `translate(${pannedX}px, ${pannedY}px) scale(${scale})`;
+        }
+
+        // منطق التعديل والإضافة
+        let currentElement = null;
+        const modal = document.getElementById('modal');
+
+        function openMenu(element) {
+            currentElement = element;
+            document.getElementById('selectedName').innerText = element.innerText;
+            modal.style.display = 'flex';
+        }
+
+        function closeModal() { modal.style.display = 'none'; }
+
+        function editName() {
+            let newName = prompt("أدخل الاسم الجديد:", currentElement.innerHTML.replace(/<br>/g, " ").replace(/<small>.*?<\/small>/g, ""));
+            if (newName) currentElement.innerHTML = newName;
+            closeModal();
+        }
+
+        function addChild() {
+            let childName = prompt("أدخل اسم الابن الجديد:");
+            if (childName) {
+                let parentLi = currentElement.parentElement;
+                let ul = parentLi.querySelector('ul');
+                
+                if (!ul) {
+                    ul = document.createElement('ul');
+                    parentLi.appendChild(ul);
+                }
+                
+                let li = document.createElement('li');
+                li.innerHTML = `<div class="node-content" onclick="openMenu(this)">${childName}</div>`;
+                ul.appendChild(li);
+            }
+            closeModal();
+        }
+
+        function deleteNode() {
+            if(confirm("هل أنت متأكد من حذف هذا الاسم وكل فروعه؟")) {
+                let li = currentElement.parentElement;
+                if(li.parentElement.children.length === 1 && li.parentElement.id !== 'familyTree') {
+                    li.parentElement.remove(); // حذف القائمة إذا فرغت
+                } else {
+                    li.remove();
+                }
+            }
+            closeModal();
+        }
+
+        // نسخ الكود للحفظ
+        function exportHTML() {
+            alert("سيتم الآن نسخ الكود كاملاً. \n\n1. اذهب إلى GitHub.\n2. امسح الكود القديم.\n3. الصق هذا الكود الجديد.\n4. اضغط Commit.");
+            
+            // تنظيف الصفحة قبل النسخ (إرجاع الحجم للوضع الطبيعي مؤقتاً)
+            let tempScale = scale;
+            let tempX = pannedX; 
+            let tempY = pannedY;
+            
+            // نسخ محتوى الصفحة
+            let htmlContent = document.documentElement.outerHTML;
+            
+            // نسخ للحافظة
+            navigator.clipboard.writeText(htmlContent).then(() => {
+                alert("تم نسخ الكود! اذهب لـ GitHub الآن.");
+            }).catch(err => {
+                console.error('فشل النسخ', err);
+                alert("فشل النسخ التلقائي، حاول تحديد النص ونسخه يدوياً.");
+            });
+        }
+    </script>
 </body>
 </html>
