@@ -3,13 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>شجرة آل عگله - فرع صكر</title>
+    <title>شجرة آل عگله - النسخة الفنية</title>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* إعدادات عامة */
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f4; text-align: center; padding: 20px; }
-        h1 { color: #2c3e50; margin-bottom: 30px; }
+        /* خلفية ورقية قديمة */
+        body { 
+            font-family: 'Amiri', serif; 
+            background-color: #fdf5e6; 
+            background-image: radial-gradient(#d4c5a9 1px, transparent 1px);
+            background-size: 20px 20px;
+            text-align: center; 
+            padding: 40px 10px;
+            margin: 0;
+        }
+
+        h1 { 
+            color: #5d4037; 
+            font-size: 2.5em; 
+            margin-bottom: 50px;
+            text-shadow: 1px 1px 2px #cea978;
+        }
         
         /* هيكلية الشجرة */
+        .tree { display: flex; justify-content: center; overflow-x: auto; padding-bottom: 50px; }
         .tree ul {
             padding-top: 20px; position: relative;
             transition: all 0.5s;
@@ -20,150 +36,183 @@
             position: relative; padding: 20px 5px 0 5px;
             transition: all 0.5s;
         }
-        /* خطوط الربط */
+
+        /* رسم الأغصان (الخطوط المنحنية) */
         .tree li::before, .tree li::after {
             content: ''; position: absolute; top: 0; right: 50%;
-            border-top: 2px solid #ccc; width: 50%; height: 20px;
+            border-top: 3px solid #8d6e63; /* لون الغصن بني */
+            width: 50%; height: 20px;
+            border-radius: 50px 0 0 0; /* انحناء الغصن */
         }
-        .tree li::after { right: auto; left: 50%; border-left: 2px solid #ccc; }
+        .tree li::after { 
+            right: auto; left: 50%; 
+            border-left: 3px solid #8d6e63;
+            border-radius: 0 50px 0 0; /* انحناء للجهة الأخرى */
+        }
         .tree li:only-child::after, .tree li:only-child::before { display: none; }
         .tree li:only-child { padding-top: 0; }
         .tree li:first-child::before, .tree li:last-child::after { border: 0 none; }
-        .tree li:last-child::before { border-right: 2px solid #ccc; border-radius: 0 5px 0 0; }
-        .tree li:first-child::after { border-radius: 5px 0 0 0; }
-        
+        .tree li:last-child::before { 
+            border-right: 3px solid #8d6e63; 
+            border-radius: 0 15px 0 0; 
+        }
+        .tree li:first-child::after { 
+            border-radius: 15px 0 0 0; 
+        }
         .tree ul ul::before {
             content: ''; position: absolute; top: 0; right: 50%;
-            border-left: 2px solid #ccc; width: 0; height: 20px;
+            border-left: 3px solid #8d6e63; width: 0; height: 20px;
         }
 
-        /* تصميم المربعات (الأسماء) */
+        /* تصميم "الورقة" أو البطاقة */
         .tree li a {
-            border: 2px solid #ccc; padding: 10px 15px;
-            text-decoration: none; color: #333;
-            font-family: arial, verdana, tahoma; font-size: 14px; font-weight: bold;
-            display: inline-block; border-radius: 5px;
-            transition: all 0.5s; background: white;
-            min-width: 80px;
+            background: linear-gradient(to bottom, #fff, #f1f8e9);
+            border: 2px solid #558b2f; /* إطار أخضر */
+            padding: 10px 15px;
+            text-decoration: none;
+            color: #33691e; /* نص أخضر غامق */
+            font-family: 'Amiri', serif; 
+            font-size: 16px; 
+            font-weight: bold;
+            display: inline-block;
+            border-radius: 15px 0 15px 0; /* شكل ورقة شجر */
+            box-shadow: 3px 3px 5px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            min-width: 90px;
+            position: relative;
         }
-        .tree li a:hover { background: #c8e4f8; border: 2px solid #94a0b4; }
-        
-        /* ألوان الأجيال */
-        .root-node { background-color: #2c3e50 !important; color: white !important; font-size: 18px !important; }
-        .gen-1 { background-color: #e8f6f3; border-color: #1abc9c; } /* الأبناء الـ 9 */
-        .gen-2 { background-color: #fef9e7; border-color: #f1c40f; } /* الأحفاد */
-        .gen-3 { background-color: #f4ecf7; border-color: #9b59b6; } /* أولاد الأحفاد */
-        
-        /* توافق مع الموبايل */
-        @media (max-width: 768px) {
-            .tree ul { display: block; padding: 0; }
-            .tree li { display: block; float: none; padding: 10px 0; text-align: right; border-right: 2px solid #ccc; margin-right: 20px; }
-            .tree li::before, .tree li::after, .tree ul ul::before { display: none; }
-            .tree li a { display: inline-block; width: auto; margin-right: 10px; }
+
+        /* تأثير عند اللمس */
+        .tree li a:hover { 
+            background: #c5e1a5; 
+            transform: scale(1.1); 
+            box-shadow: 0px 0px 10px #8bc34a;
+            z-index: 10;
         }
+        
+        /* الجد الأكبر (الجذع) */
+        .root-node { 
+            background: #5d4037 !important; 
+            color: #fff !important; 
+            border: 3px solid #3e2723 !important;
+            font-size: 22px !important;
+            border-radius: 10px !important;
+            padding: 15px 30px !important;
+        }
+
+        /* الأحفاد الصغار */
+        .small-text { font-size: 12px; color: #555; display: block; margin-top: 5px; }
+
+        /* أيقونة ورقة صغيرة بجانب الاسم */
+        .tree li a::before {
+            content: '🍃';
+            display: block; font-size: 12px; margin-bottom: 2px;
+        }
+        .root-node::before { content: '🌳'; font-size: 20px; }
+
     </style>
 </head>
 <body>
 
-    <h1>شجرة آل عگله - فرع صكر</h1>
+    <h1>🌳 شجرة آل عگله - فرع صكر</h1>
     
     <div class="tree">
         <ul>
             <li>
                 <a href="#" class="root-node">صكر بن عگله</a>
                 <ul>
-                    <li><a href="#" class="gen-1">چاسب (1930)</a>
+                    <li><a href="#">چاسب <br><small>1930</small></a>
                         <ul>
-                            <li><a href="#" class="gen-2">حسب (65)</a>
-                                <ul><li><a href="#" class="gen-3">علي 91<br><small>أمير 20</small></a></li><li><a href="#" class="gen-3">حسنين 02</a></li></ul>
+                            <li><a href="#">حسب <small>65</small></a>
+                                <ul><li><a href="#">علي 91<span class="small-text">أمير 20</span></a></li><li><a href="#">حسنين 02</a></li></ul>
                             </li>
-                            <li><a href="#" class="gen-2">عبد (74)</a>
-                                <ul><li><a href="#" class="gen-3">م.باقر 03</a></li><li><a href="#" class="gen-3">م.تقي</a></li><li><a href="#" class="gen-3">م.جواد 10</a></li></ul>
+                            <li><a href="#">عبد <small>74</small></a>
+                                <ul><li><a href="#">م.باقر 03</a></li><li><a href="#">م.تقي</a></li><li><a href="#">م.جواد 10</a></li></ul>
                             </li>
-                            <li><a href="#" class="gen-2">فاخر (71)</a>
-                                <ul><li><a href="#" class="gen-3">بلال 98</a></li><li><a href="#" class="gen-3">منهال 99</a></li></ul>
+                            <li><a href="#">فاخر <small>71</small></a>
+                                <ul><li><a href="#">بلال 98</a></li><li><a href="#">منهال 99</a></li></ul>
                             </li>
-                            <li><a href="#" class="gen-2">فاضل (73)</a>
-                                <ul><li><a href="#" class="gen-3">أحمد</a></li><li><a href="#" class="gen-3">عباس 10</a></li></ul>
+                            <li><a href="#">فاضل <small>73</small></a>
+                                <ul><li><a href="#">أحمد</a></li><li><a href="#">عباس 10</a></li></ul>
                             </li>
-                            <li><a href="#" class="gen-2">نعيم (80)</a>
-                                <ul><li><a href="#" class="gen-3">رضوان 12</a></li><li><a href="#" class="gen-3">علي 20</a></li></ul>
+                            <li><a href="#">نعيم <small>80</small></a>
+                                <ul><li><a href="#">رضوان 12</a></li><li><a href="#">علي 20</a></li></ul>
                             </li>
                         </ul>
                     </li>
 
-                    <li><a href="#" class="gen-1">حاتم (1947)</a>
+                    <li><a href="#">حاتم <br><small>1947</small></a>
                         <ul>
-                            <li><a href="#" class="gen-2">سعد (74)</a>
+                            <li><a href="#">سعد 74</a>
                                 <ul>
-                                    <li><a href="#" class="gen-3">صادق 92<br><small>علي11, حاتم14</small></a></li>
-                                    <li><a href="#" class="gen-3">صالح 93<br><small>حسين13, كاظم23</small></a></li>
+                                    <li><a href="#">صادق 92<span class="small-text">علي, حاتم</span></a></li>
+                                    <li><a href="#">صالح 93<span class="small-text">حسين, كاظم</span></a></li>
                                 </ul>
                             </li>
-                            <li><a href="#" class="gen-2">مهدي (87)</a><ul><li><a href="#" class="gen-3">عباس 12</a></li></ul></li>
-                            <li><a href="#" class="gen-2">حسين (89)</a><ul><li><a href="#" class="gen-3">إبراهيم 09</a></li><li><a href="#" class="gen-3">علي 14</a></li></ul></li>
+                            <li><a href="#">مهدي 87</a><ul><li><a href="#">عباس 12</a></li></ul></li>
+                            <li><a href="#">حسين 89</a><ul><li><a href="#">إبراهيم 09</a></li><li><a href="#">علي 14</a></li></ul></li>
                         </ul>
                     </li>
 
-                    <li><a href="#" class="gen-1">هاشم (1947)</a>
+                    <li><a href="#">هاشم <br><small>1947</small></a>
                         <ul>
-                            <li><a href="#" class="gen-2">حميد (73)</a><ul><li><a href="#" class="gen-3">علي 02</a></li><li><a href="#" class="gen-3">حسين 04</a></li></ul></li>
-                            <li><a href="#" class="gen-2">حمود (77)</a><ul><li><a href="#" class="gen-3">يوسف 18</a></li><li><a href="#" class="gen-3">مصطفى 24</a></li></ul></li>
-                            <li><a href="#" class="gen-2">محمد (78)</a><ul><li><a href="#" class="gen-3">حسن 16</a></li></ul></li>
-                            <li><a href="#" class="gen-2">علي (82)</a><ul><li><a href="#" class="gen-3">محمد 11</a></li></ul></li>
-                            <li><a href="#" class="gen-2">باقر (90)</a><ul><li><a href="#" class="gen-3">أحمد 12</a></li></ul></li>
-                            <li><a href="#" class="gen-2">صادق (92)</a><ul><li><a href="#" class="gen-3">سيف 19</a></li></ul></li>
+                            <li><a href="#">حميد 73</a><ul><li><a href="#">علي 02</a></li><li><a href="#">حسين 04</a></li></ul></li>
+                            <li><a href="#">حمود 77</a><ul><li><a href="#">يوسف 18</a></li><li><a href="#">مصطفى 24</a></li></ul></li>
+                            <li><a href="#">محمد 78</a><ul><li><a href="#">حسن 16</a></li></ul></li>
+                            <li><a href="#">علي 82</a><ul><li><a href="#">محمد 11</a></li></ul></li>
+                            <li><a href="#">باقر 90</a><ul><li><a href="#">أحمد 12</a></li></ul></li>
+                            <li><a href="#">صادق 92</a><ul><li><a href="#">سيف 19</a></li></ul></li>
                         </ul>
                     </li>
 
-                    <li><a href="#" class="gen-1">قاسم (1951)</a>
+                    <li><a href="#">قاسم <br><small>1951</small></a>
                         <ul>
-                            <li><a href="#" class="gen-2">ناصر (76)</a>
-                                <ul><li><a href="#" class="gen-3">حسين</a></li><li><a href="#" class="gen-3">عباس</a></li><li><a href="#" class="gen-3">علي</a></li></ul>
+                            <li><a href="#">ناصر 76</a>
+                                <ul><li><a href="#">حسين</a></li><li><a href="#">عباس</a></li><li><a href="#">علي</a></li></ul>
                             </li>
-                            <li><a href="#" class="gen-2">حيدر (80)</a></li>
+                            <li><a href="#">حيدر 80</a></li>
                         </ul>
                     </li>
 
-                    <li><a href="#" class="gen-1">جاسم (1954)</a>
+                    <li><a href="#">جاسم <br><small>1954</small></a>
                         <ul>
-                            <li><a href="#" class="gen-2">أحمد (83)</a>
-                                <ul><li><a href="#" class="gen-3">علي 01<br><small>مصطفى 23</small></a></li><li><a href="#" class="gen-3">يونس 08</a></li></ul>
+                            <li><a href="#">أحمد 83</a>
+                                <ul><li><a href="#">علي 01<span class="small-text">مصطفى 23</span></a></li><li><a href="#">يونس 08</a></li></ul>
                             </li>
-                            <li><a href="#" class="gen-2">عباس (86)</a><ul><li><a href="#" class="gen-3">فاضل 13</a></li></ul></li>
-                            <li><a href="#" class="gen-2">مرتضى (88)</a></li>
+                            <li><a href="#">عباس 86</a><ul><li><a href="#">فاضل 13</a></li></ul></li>
+                            <li><a href="#">مرتضى 88</a></li>
                         </ul>
                     </li>
 
-                    <li><a href="#" class="gen-1">كريم (1960)</a>
+                    <li><a href="#">كريم <br><small>1960</small></a>
                         <ul>
-                            <li><a href="#" class="gen-2">عمار (83)</a><ul><li><a href="#" class="gen-3">مؤمل 06</a></li><li><a href="#" class="gen-3">محمد 07</a></li></ul></li>
-                            <li><a href="#" class="gen-2">علي (89)</a><ul><li><a href="#" class="gen-3">حسين 21</a></li></ul></li>
-                            <li><a href="#" class="gen-2">حيدر (93)</a></li>
+                            <li><a href="#">عمار 83</a><ul><li><a href="#">مؤمل 06</a></li><li><a href="#">محمد 07</a></li></ul></li>
+                            <li><a href="#">علي 89</a><ul><li><a href="#">حسين 21</a></li></ul></li>
+                            <li><a href="#">حيدر 93</a></li>
                         </ul>
                     </li>
 
-                    <li><a href="#" class="gen-1">حسين (1967)</a>
+                    <li><a href="#">حسين <br><small>1967</small></a>
                         <ul>
-                            <li><a href="#" class="gen-2">مالك (82)</a><ul><li><a href="#" class="gen-3">يوسف 04</a></li></ul></li>
-                            <li><a href="#" class="gen-2">علاء (85)</a><ul><li><a href="#" class="gen-3">أبو الحسن 09</a></li></ul></li>
-                            <li><a href="#" class="gen-2">محمد (93)</a><ul><li><a href="#" class="gen-3">آدم 24</a></li></ul></li>
+                            <li><a href="#">مالك 82</a><ul><li><a href="#">يوسف 04</a></li></ul></li>
+                            <li><a href="#">علاء 85</a><ul><li><a href="#">أبو الحسن</a></li></ul></li>
+                            <li><a href="#">محمد 93</a><ul><li><a href="#">آدم 24</a></li></ul></li>
                         </ul>
                     </li>
 
-                    <li><a href="#" class="gen-1">باسم (1970)</a>
+                    <li><a href="#">باسم <br><small>1970</small></a>
                         <ul>
-                            <li><a href="#" class="gen-2">حسن (92)</a><ul><li><a href="#" class="gen-3">علي 11</a></li></ul></li>
-                            <li><a href="#" class="gen-2">محمد (97)</a><ul><li><a href="#" class="gen-3">علي 20</a></li></ul></li>
+                            <li><a href="#">حسن 92</a><ul><li><a href="#">علي 11</a></li></ul></li>
+                            <li><a href="#">محمد 97</a><ul><li><a href="#">علي 20</a></li></ul></li>
                         </ul>
                     </li>
 
-                    <li><a href="#" class="gen-1">فالح (1971)</a>
+                    <li><a href="#">فالح <br><small>1971</small></a>
                         <ul>
-                            <li><a href="#" class="gen-2">أحمد (93)</a><ul><li><a href="#" class="gen-3">علي 12</a></li></ul></li>
-                            <li><a href="#" class="gen-2">علي (97)</a></li>
-                            <li><a href="#" class="gen-2">منتظر (00)</a></li>
-                            <li><a href="#" class="gen-2">م.تقي (04)</a></li>
+                            <li><a href="#">أحمد 93</a><ul><li><a href="#">علي 12</a></li></ul></li>
+                            <li><a href="#">علي 97</a></li>
+                            <li><a href="#">منتظر 00</a></li>
+                            <li><a href="#">م.تقي 04</a></li>
                         </ul>
                     </li>
 
